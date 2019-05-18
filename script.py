@@ -5,11 +5,12 @@ import re
 content = requests.get('https://www.hotnewhiphop.com/songs/').content
 soup = BeautifulSoup(content, "html.parser")
 
-title = soup.select('.cover-title')[0].get_text().strip()
-artists  = soup.select('.grid-item-artists')[0].get_text().strip()
-artists = artists.replace('\xa0',' ')
+title_list = soup.select('.cover-title')
+artists_list  = soup.select('.grid-item-artists')
 songs = {}
-songs[title] = artists
-print(title)
-print(artists)
+for i in range(len(title_list)):
+    title = title_list[i].get_text().strip()
+    artist = artists_list[i].get_text().strip().replace('\xa0',' ')
+    songs[title] = artist
+
 print(songs)
