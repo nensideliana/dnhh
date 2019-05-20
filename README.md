@@ -1,7 +1,7 @@
 # DNHH
 A python script to get the newest hip-hop songs on https://www.hotnewhiphop.com/songs/ and add them to a Spotify playlist
 
-First you will need a client id, client secret and your Spotify username. Register your app in https://developer.spotify.com/dashboard/applications to get your client id and secret.
+First you will need a client id, client secret and your Spotify username. Register your app in https://developer.spotify.com/dashboard/applications to get your id and secret.
 
 Run the file by typing python script.py [username] [client_id] [client_secret]
 
