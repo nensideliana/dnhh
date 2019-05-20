@@ -45,24 +45,30 @@ if token:
     #create the playlist
     playlists = sp.user_playlist_create(username,'Daily New Hip Hop',public=False)
     playlist_id = playlists['id']
-    
+
     #To check if playlist exists
     # user_playlists = sp.user_playlists(username)
     # print(user_playlists['items'][0]['name'])
 
-    results = sp.search(q='track:' + t, type='track')
-    item = results['tracks']['items'][0]
+    #search for tracks in dictionary and add track id's to playlist
+    for title in songs.keys():
+        artist = songs[title]
+    
+        results = sp.search(q='track:' + title + ' ' + artist, type='track')
+        if(any(results) and results['tracks']['total'] != 0):
+          
+            item = results['tracks']['items'][0]
 
-    search_title = item['name']
-    print('title:',search_title)
-    search_artist = item['artists'][0]['name']
-    print('artist:',search_artist)
-    search_id = item['id']
-    print('id:',search_id)
+            search_title = item['name']
+            print('title:',search_title)
+            search_artist = item['artists'][0]['name']
+            print('artist:',search_artist)
+            search_id = item['id']
+            print('id:',search_id)
 
-    tracks.append(search_id)
+            tracks.append(search_id)
 
-    #add to playlist
+    #add all songs to the playlist
     sp.user_playlist_add_tracks(username, playlist_id, tracks, position=None)
 
 else:
