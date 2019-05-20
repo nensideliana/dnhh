@@ -2,7 +2,7 @@ import spotipy
 import spotipy.util as util
 import sys 
 import datetime
-import get_songs
+from get_songs import songs
 
 #check for parameters
 if len(sys.argv) != 4:
