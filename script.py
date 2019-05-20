@@ -3,14 +3,15 @@ from bs4 import BeautifulSoup
 import spotipy
 import spotipy.util as util
 import sys 
+import json
 
 if len(sys.argv) != 4:
     print('Need 3 parameters: username, client id, client secret')
-    exit(1)
-
-username = sys.argv[1]
-client_id = sys.argv[2]
-client_secret = sys.argv[3]
+    sys.exit()
+else:
+    username = sys.argv[1]
+    client_id = sys.argv[2]
+    client_secret = sys.argv[3]
 
 content = requests.get('https://www.hotnewhiphop.com/songs/').content
 soup = BeautifulSoup(content, "html.parser")
@@ -30,9 +31,29 @@ print(t,a)
 
 scope='playlist-modify-private'
 token = util.prompt_for_user_token(username, scope,client_id=client_id,client_secret=client_secret,redirect_uri='http://localhost:8888/callback/')
+
+tracks = []
+
 if token:
     sp = spotipy.Spotify(auth=token)
-    playlists = sp.user_playlist_create('nensideliana','Daily New Hip Hop',public=False)
+    playlists = sp.user_playlist_create(username,'Daily New Hip Hop',public=False)
+    playlist_id = playlists['id']
+
+    results = sp.search(q='track:' + t, type='track')
+    item = results['tracks']['items'][0]
+
+    search_title = item['name']
+    print('title:',search_title)
+    search_artist = item['artists'][0]['name']
+    print('artist:',search_artist)
+    search_id = item['id']
+    print('id:',search_id)
+
+    tracks.append(search_id)
+
+    #add to playlist
+    sp.user_playlist_add_tracks(username, playlist_id, tracks, position=None)
+
 else:
     print("Can't get token for ", username)
 
