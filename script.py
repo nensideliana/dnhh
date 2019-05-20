@@ -5,6 +5,7 @@ import spotipy.util as util
 import sys 
 import json
 
+#check for parameters
 if len(sys.argv) != 4:
     print('Need 3 parameters: username, client id, client secret')
     sys.exit()
@@ -13,13 +14,16 @@ else:
     client_id = sys.argv[2]
     client_secret = sys.argv[3]
 
+#grab content to scrape
 content = requests.get('https://www.hotnewhiphop.com/songs/').content
 soup = BeautifulSoup(content, "html.parser")
 
+#grab all title and artist tags
 title_list = soup.select('.cover-title')
 artists_list  = soup.select('.grid-item-artists')
-songs = {}
 
+#grab the text from these tags and put them in a dictionary in the form title:artist
+songs = {}
 for i in range(len(title_list)):
     title = title_list[i].get_text().strip()
     artist = artists_list[i].get_text().strip().replace('\xa0',' ')
@@ -29,6 +33,7 @@ t = list(songs.keys())[0]
 a = list(songs.values())[0]
 print(t,a)
 
+#get token to access spotify data
 scope='playlist-modify-private'
 token = util.prompt_for_user_token(username, scope,client_id=client_id,client_secret=client_secret,redirect_uri='http://localhost:8888/callback/')
 
@@ -36,8 +41,14 @@ tracks = []
 
 if token:
     sp = spotipy.Spotify(auth=token)
+
+    #create the playlist
     playlists = sp.user_playlist_create(username,'Daily New Hip Hop',public=False)
     playlist_id = playlists['id']
+    
+    #To check if playlist exists
+    # user_playlists = sp.user_playlists(username)
+    # print(user_playlists['items'][0]['name'])
 
     results = sp.search(q='track:' + t, type='track')
     item = results['tracks']['items'][0]
