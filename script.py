@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 import spotipy
 import spotipy.util as util
 import sys 
-import json
+import datetime
 
 #check for parameters
 if len(sys.argv) != 4:
@@ -37,26 +37,31 @@ print(t,a)
 scope='playlist-modify-private'
 token = util.prompt_for_user_token(username, scope,client_id=client_id,client_secret=client_secret,redirect_uri='http://localhost:8888/callback/')
 
-tracks = []
-
 if token:
     sp = spotipy.Spotify(auth=token)
 
     #create the playlist
-    playlists = sp.user_playlist_create(username,'Daily New Hip Hop',public=False)
+    dt = datetime.datetime.today()
+    date = str(dt.year) + '/' + str(dt.month) + '/' + str(dt.day)
+    playlists = sp.user_playlist_create(username,'DNHH '+ date,public=False)
     playlist_id = playlists['id']
 
-    #To check if playlist exists
+    #To check if playlist exists <<IN PROGRESS>>
     # user_playlists = sp.user_playlists(username)
     # print(user_playlists['items'][0]['name'])
 
+    tracks = []
+
     #search for tracks in dictionary and add track id's to playlist
     for title in songs.keys():
+
         artist = songs[title]
-    
         results = sp.search(q='track:' + title + ' ' + artist, type='track')
+
+        #if there are search results
         if(any(results) and results['tracks']['total'] != 0):
           
+            #get first result
             item = results['tracks']['items'][0]
 
             search_title = item['name']
@@ -73,8 +78,3 @@ if token:
 
 else:
     print("Can't get token for ", username)
-
-
-# results = sp.search(q='Tyler the creator new magic', limit=20)
-# for i, t in enumerate(results['tracks']['items']):
-#     print(' ', i, t['name'])
